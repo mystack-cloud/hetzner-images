@@ -23,8 +23,14 @@ jobs:
       - name: Generate matrix
         id: matrix
         run: |
+          json=$(bash scripts/list.sh --json)
+          if [ -z "$json" ]; then
+            echo "ERROR: list.sh produced no output (check config/images.yaml)" >&2
+            exit 1
+          fi
           echo "matrix<<EOF" >> "$GITHUB_OUTPUT"
-          bash scripts/list.sh --json >> "$GITHUB_OUTPUT"
+          printf '%s' "$json" >> "$GITHUB_OUTPUT"
+          echo "" >> "$GITHUB_OUTPUT"
           echo "EOF" >> "$GITHUB_OUTPUT"
       - name: List image names (for manifest job)
         id: images
@@ -38,6 +44,7 @@ jobs:
     name: Sync ${{ matrix.image }} (${{ matrix.arch }})
     needs: prepare
     runs-on: ubuntu-latest
+    if: needs.prepare.outputs.matrix != ''
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.matrix) }}
