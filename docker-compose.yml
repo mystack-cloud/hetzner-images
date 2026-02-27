@@ -1,0 +1,19 @@
+x-build-common: &build-common
+  build: .
+  volumes:
+    - .:/workspace
+    - /var/run/docker.sock:/var/run/docker.sock
+    - ./dist:/workspace/dist
+  working_dir: /workspace
+
+services:
+  download:
+    <<: *build-common
+    environment:
+      - HETZNER_MIRROR_USER=${HETZNER_MIRROR_USER}
+      - HETZNER_MIRROR_PASS=${HETZNER_MIRROR_PASS}
+    entrypoint: ["bash", "scripts/download.sh"]
+
+  build:
+    <<: *build-common
+    entrypoint: ["bash", "scripts/build.sh"]

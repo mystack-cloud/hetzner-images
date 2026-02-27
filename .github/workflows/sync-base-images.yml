@@ -1,0 +1,157 @@
+---
+# Download Hetzner bootimages, import as Docker images, push to GHCR (multi-arch).
+# Runs monthly and on workflow_dispatch (manual). Image set from config/images.yaml.
+name: Sync Hetzner Base Images
+
+on:
+  schedule:
+    - cron: "0 3 1 * *"
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install yq
+        run: |
+          sudo wget -qO /usr/local/bin/yq "https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64"
+          sudo chmod +x /usr/local/bin/yq
+      - name: Generate matrix
+        id: matrix
+        run: |
+          echo "matrix<<EOF" >> "$GITHUB_OUTPUT"
+          bash scripts/list.sh --json >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+      - name: List image names (for manifest job)
+        id: images
+        run: |
+          images=$(yq -r '.images | keys | .[]' config/images.yaml | sort -u)
+          echo "names<<EOF" >> "$GITHUB_OUTPUT"
+          echo "$images" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+
+  sync-arch:
+    name: Sync ${{ matrix.image }} (${{ matrix.arch }})
+    needs: prepare
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.prepare.outputs.matrix) }}
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Download base image from Hetzner
+        env:
+          HETZNER_MIRROR_USER: ${{ secrets.HETZNER_MIRROR_USER }}
+          HETZNER_MIRROR_PASS: ${{ secrets.HETZNER_MIRROR_PASS }}
+        run: docker compose run --rm download ${{ matrix.image }} ${{ matrix.arch }}
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Tag and push arch image
+        run: |
+          IMG="${{ env.REGISTRY }}/${{ github.repository }}/${{ matrix.image }}"
+          docker tag "metal-base:${{ matrix.image }}-${{ matrix.arch }}" "${IMG}:${{ matrix.arch }}"
+          docker push "${IMG}:${{ matrix.arch }}"
+
+  manifest:
+    name: Create multi-arch manifests
+    needs: [prepare, sync-arch]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install yq
+        run: |
+          sudo wget -qO /usr/local/bin/yq "https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64"
+          sudo chmod +x /usr/local/bin/yq
+
+      - name: Create and push manifest lists
+        env:
+          REGISTRY: ${{ env.REGISTRY }}
+          REPO: ${{ github.repository }}
+        run: |
+          for image in $(yq -r '.images | keys | .[]' config/images.yaml); do
+            arches=$(yq -r ".images.${image} | keys | .[]" config/images.yaml)
+            refs=""
+            for arch in $arches; do
+              refs="${refs} ${REGISTRY}/${REPO}/${image}:${arch}"
+            done
+            docker buildx imagetools create -t "${REGISTRY}/${REPO}/${image}:latest" $refs
+          done
+
+  update-readme:
+    name: Update README with image list
+    needs: [prepare, manifest]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install yq
+        run: |
+          sudo wget -qO /usr/local/bin/yq "https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64"
+          sudo chmod +x /usr/local/bin/yq
+
+      - name: Generate images table
+        id: table
+        run: |
+          echo "| Image | Architectures |" > table.md
+          echo "|-------|---------------|" >> table.md
+          for image in $(yq -r '.images | keys | .[]' config/images.yaml | sort); do
+            arches=$(yq -r ".images.${image} | keys | .[]" config/images.yaml | sort | paste -sd ', ' -)
+            echo "| \`${image}\` | ${arches} |" >> table.md
+          done
+
+      - name: Update README
+        run: |
+          awk '
+            /<!-- REGISTRY_IMAGES -->/ { print; while ((getline line < "table.md") > 0) print line; close("table.md"); skip=1; next }
+            skip && /<!-- \/REGISTRY_IMAGES -->/ { print; skip=0; next }
+            skip { next }
+            { print }
+          ' README.md > README.new && mv README.new README.md
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add README.md
+          if git diff --staged --quiet; then
+            echo "No README changes"
+          else
+            git commit -m "chore: update README with images in registry"
+            git push
+          fi

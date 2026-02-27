@@ -1,0 +1,39 @@
+# Hetzner bootimages: https://download.hetzner.com/bootimages/
+# Maps (image-key, arch) to tarball filename on the mirror.
+# Add arm64 only where Hetzner provides that arch; remove if download returns 404.
+images:
+  ubuntu-2404:
+    amd64: Ubuntu-2404-noble-amd64-base.tar.gz
+    arm64: Ubuntu-2404-noble-arm64-base.tar.gz
+  ubuntu-2204:
+    amd64: Ubuntu-2204-jammy-amd64-base.tar.gz
+    arm64: Ubuntu-2204-jammy-arm64-base.tar.gz
+  debian-13:
+    amd64: Debian-1303-trixie-amd64-base.tar.gz
+    arm64: Debian-1303-trixie-arm64-base.tar.gz
+  debian-12:
+    amd64: Debian-1213-bookworm-amd64-base.tar.gz
+    arm64: Debian-1213-bookworm-arm64-base.tar.gz
+  debian-11:
+    amd64: Debian-1111-bullseye-amd64-base.tar.gz
+    arm64: Debian-1111-bullseye-arm64-base.tar.gz
+  centos-10:
+    amd64: CentOS-1000-stream-amd64-base.tar.gz
+  centos-9:
+    amd64: CentOS-90-stream-amd64-base.tar.gz
+  rocky-10:
+    amd64: Rocky-1001-amd64-base.tar.gz
+  rocky-9:
+    amd64: Rocky-97-amd64-base.tar.gz
+  rocky-8:
+    amd64: Rocky-810-amd64-base.tar.gz
+  alma-10:
+    amd64: Alma-1001-amd64-base.tar.gz
+  alma-9:
+    amd64: Alma-97-amd64-base.tar.gz
+  alma-8:
+    amd64: Alma-810-amd64-base.tar.gz
+  opensuse-16:
+    amd64: Opensuse-1600-amd64-base.tar.gz
+  opensuse-15:
+    amd64: Opensuse-1506-amd64-base.tar.gz
