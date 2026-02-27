@@ -20,25 +20,28 @@ jobs:
         run: |
           sudo wget -qO /usr/local/bin/yq "https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64"
           sudo chmod +x /usr/local/bin/yq
-      - name: Generate matrix
-        id: matrix
+      - name: Generate matrix and image list
+        id: prepare-outputs
         run: |
-          json=$(bash scripts/list.sh --json)
-          if [ -z "$json" ]; then
-            echo "ERROR: list.sh produced no output (check config/images.yaml)" >&2
+          cd "$GITHUB_WORKSPACE"
+          if [ ! -f config/images.yaml ]; then
+            echo "ERROR: config/images.yaml not found" >&2
             exit 1
           fi
-          echo "matrix<<EOF" >> "$GITHUB_OUTPUT"
+          json=$(bash scripts/list.sh --json)
+          if [ -z "$json" ]; then
+            echo "ERROR: list.sh produced no output" >&2
+            exit 1
+          fi
+          # Use unique delimiters so multiple outputs don't clash
+          echo "matrix<<MATRIX_EOF" >> "$GITHUB_OUTPUT"
           printf '%s' "$json" >> "$GITHUB_OUTPUT"
           echo "" >> "$GITHUB_OUTPUT"
-          echo "EOF" >> "$GITHUB_OUTPUT"
-      - name: List image names (for manifest job)
-        id: images
-        run: |
+          echo "MATRIX_EOF" >> "$GITHUB_OUTPUT"
           images=$(yq -r '.images | keys | .[]' config/images.yaml | sort -u)
-          echo "names<<EOF" >> "$GITHUB_OUTPUT"
+          echo "names<<NAMES_EOF" >> "$GITHUB_OUTPUT"
           echo "$images" >> "$GITHUB_OUTPUT"
-          echo "EOF" >> "$GITHUB_OUTPUT"
+          echo "NAMES_EOF" >> "$GITHUB_OUTPUT"
 
   sync-arch:
     name: Sync ${{ matrix.image }} (${{ matrix.arch }})
