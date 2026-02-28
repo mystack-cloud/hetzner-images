@@ -37,8 +37,11 @@ jobs:
             exit 1
           fi
           echo "Matrix JSON length: ${#json} chars (output written to GITHUB_OUTPUT)"
-          # Single-line output is safest for fromJson()
-          echo "matrix=$json" >> "$GITHUB_OUTPUT"
+          {
+            echo "matrix<<MATRIX_EOF"
+            echo "$json"
+            echo "MATRIX_EOF"
+          } >> "$GITHUB_OUTPUT"
           images=$(yq -r '.images | keys | .[]' config/images.yaml | sort -u)
           echo "names<<NAMES_EOF" >> "$GITHUB_OUTPUT"
           echo "$images" >> "$GITHUB_OUTPUT"
@@ -113,7 +116,7 @@ jobs:
           REPO: ${{ github.repository }}
         run: |
           for image in $(yq -r '.images | keys | .[]' config/images.yaml); do
-            arches=$(yq -r ".images.${image} | keys | .[]" config/images.yaml)
+            arches=$(yq -r --arg image "$image" '.images[$image] | keys | .[]' config/images.yaml)
             refs=""
             for arch in $arches; do
               refs="${refs} ${REGISTRY}/${REPO}/${image}:${arch}"

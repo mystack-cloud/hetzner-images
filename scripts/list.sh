@@ -7,11 +7,18 @@ set -euo pipefail
 FORMAT="lines"
 CONFIG_FILE="config/images.yaml"
 for a in "$@"; do
-  if [[ "$a" == "--json" ]]; then
-    FORMAT="json"
-  else
-    CONFIG_FILE="$a"
-  fi
+  case "$a" in
+    --json)
+      FORMAT="json"
+      ;;
+    -*)
+      echo "ERROR: Unknown option: $a" >&2
+      exit 2
+      ;;
+    *)
+      CONFIG_FILE="$a"
+      ;;
+  esac
 done
 
 if [ ! -f "$CONFIG_FILE" ]; then
@@ -24,21 +31,19 @@ if ! command -v yq &>/dev/null; then
 fi
 
 if [[ "$FORMAT" == "json" ]]; then
-  # Output JSON array [{"image":"debian-13","arch":"amd64"}, ...] for GHA matrix
-  first=true
-  echo -n '['
-  for img in $(yq -r '.images | keys | .[]' "$CONFIG_FILE"); do
-    for arch in $(yq -r ".images.${img} | keys | .[]" "$CONFIG_FILE"); do
-      $first || echo -n ','
-      echo -n "{\"image\":\"$img\",\"arch\":\"$arch\"}"
-      first=false
-    done
-  done
-  echo ']'
+  # Output compact JSON array [{"image":"debian-13","arch":"amd64"}, ...] for GHA matrix
+  yq -o=json -I=0 '
+    .images as $images
+    | [ $images | keys | .[] as $img
+        | ($images[$img] | keys | .[] as $arch
+            | {"image": $img, "arch": $arch}
+          )
+      ]
+  ' "$CONFIG_FILE"
 else
-  for img in $(yq -r '.images | keys | .[]' "$CONFIG_FILE"); do
-    for arch in $(yq -r ".images.${img} | keys | .[]" "$CONFIG_FILE"); do
-      echo "${img} ${arch}"
-    done
-  done
+  yq -r '
+    .images as $images
+    | $images | keys | .[] as $img
+    | ($images[$img] | keys | .[] as $arch | "\($img) \($arch)")
+  ' "$CONFIG_FILE"
 fi

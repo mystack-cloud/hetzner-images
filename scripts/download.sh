@@ -14,7 +14,7 @@ HETZNER_BASE="https://${HETZNER_MIRROR_USER}:${HETZNER_MIRROR_PASS}@download.het
 
 CONFIG_FILE="config/images.yaml"
 if command -v yq &>/dev/null && [ -f "$CONFIG_FILE" ]; then
-  BASE_FILE=$(yq -r ".images.${IMAGE}.${ARCH} // empty" "$CONFIG_FILE")
+  BASE_FILE=$(yq -r --arg image "$IMAGE" --arg arch "$ARCH" '.images[$image][$arch] // empty' "$CONFIG_FILE")
   if [ -z "$BASE_FILE" ]; then
     echo "ERROR: No config for image=${IMAGE} arch=${ARCH} in ${CONFIG_FILE}"
     exit 1
