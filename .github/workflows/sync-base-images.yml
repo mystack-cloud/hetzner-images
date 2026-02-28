@@ -33,8 +33,9 @@ jobs:
             echo "ERROR: list.sh produced no image/arch pairs (check config/images.yaml)" >&2
             exit 1
           fi
-          # Write matrix as single-line value so fromJson gets valid JSON (no leading newline)
-          printf 'matrix<<MATRIX_EOF\n%s\nMATRIX_EOF\n' "$json" >> "$GITHUB_OUTPUT"
+          echo "Matrix JSON length: ${#json} chars (output written to GITHUB_OUTPUT)"
+          # Value must be exact JSON (no leading/trailing newline) or fromJson() fails and sync-arch is skipped
+          printf 'matrix<<MATRIX_EOF\n%sMATRIX_EOF\n' "$json" >> "$GITHUB_OUTPUT"
           images=$(yq -r '.images | keys | .[]' config/images.yaml | sort -u)
           echo "names<<NAMES_EOF" >> "$GITHUB_OUTPUT"
           echo "$images" >> "$GITHUB_OUTPUT"
