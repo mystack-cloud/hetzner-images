@@ -14,6 +14,9 @@ env:
 jobs:
   prepare:
     runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.prepare-outputs.outputs.matrix }}
+      names: ${{ steps.prepare-outputs.outputs.names }}
     steps:
       - uses: actions/checkout@v4
       - name: Install yq
@@ -34,8 +37,8 @@ jobs:
             exit 1
           fi
           echo "Matrix JSON length: ${#json} chars (output written to GITHUB_OUTPUT)"
-          # Value must be exact JSON (no leading/trailing newline) or fromJson() fails and sync-arch is skipped
-          printf 'matrix<<MATRIX_EOF\n%sMATRIX_EOF\n' "$json" >> "$GITHUB_OUTPUT"
+          # Single-line output is safest for fromJson()
+          echo "matrix=$json" >> "$GITHUB_OUTPUT"
           images=$(yq -r '.images | keys | .[]' config/images.yaml | sort -u)
           echo "names<<NAMES_EOF" >> "$GITHUB_OUTPUT"
           echo "$images" >> "$GITHUB_OUTPUT"
