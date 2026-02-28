@@ -29,15 +29,12 @@ jobs:
             exit 1
           fi
           json=$(bash scripts/list.sh --json)
-          if [ -z "$json" ]; then
-            echo "ERROR: list.sh produced no output" >&2
+          if [ -z "$json" ] || [ "$json" = "[]" ]; then
+            echo "ERROR: list.sh produced no image/arch pairs (check config/images.yaml)" >&2
             exit 1
           fi
-          # Use unique delimiters so multiple outputs don't clash
-          echo "matrix<<MATRIX_EOF" >> "$GITHUB_OUTPUT"
-          printf '%s' "$json" >> "$GITHUB_OUTPUT"
-          echo "" >> "$GITHUB_OUTPUT"
-          echo "MATRIX_EOF" >> "$GITHUB_OUTPUT"
+          # Write matrix as single-line value so fromJson gets valid JSON (no leading newline)
+          printf 'matrix<<MATRIX_EOF\n%s\nMATRIX_EOF\n' "$json" >> "$GITHUB_OUTPUT"
           images=$(yq -r '.images | keys | .[]' config/images.yaml | sort -u)
           echo "names<<NAMES_EOF" >> "$GITHUB_OUTPUT"
           echo "$images" >> "$GITHUB_OUTPUT"
