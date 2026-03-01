@@ -13,84 +13,21 @@ The following images are synced to **ghcr.io/\<owner\>/\<repo\>/\<image\>:latest
 <!-- REGISTRY_IMAGES -->
 | Image | Architectures |
 |-------|---------------|
-| [`ghcr.io/mystack-cloud/hetzner-images/alma-10:latest`](https://ghcr.io/mystack-cloud/hetzner-images/alma-10:latest) | amd64 |
-| [`ghcr.io/mystack-cloud/hetzner-images/alma-8:latest`](https://ghcr.io/mystack-cloud/hetzner-images/alma-8:latest) | amd64 |
-| [`ghcr.io/mystack-cloud/hetzner-images/alma-9:latest`](https://ghcr.io/mystack-cloud/hetzner-images/alma-9:latest) | amd64 |
-| [`ghcr.io/mystack-cloud/hetzner-images/centos-10:latest`](https://ghcr.io/mystack-cloud/hetzner-images/centos-10:latest) | amd64 |
-| [`ghcr.io/mystack-cloud/hetzner-images/centos-9:latest`](https://ghcr.io/mystack-cloud/hetzner-images/centos-9:latest) | amd64 |
-| [`ghcr.io/mystack-cloud/hetzner-images/debian-11:latest`](https://ghcr.io/mystack-cloud/hetzner-images/debian-11:latest) | amd64,arm64 |
-| [`ghcr.io/mystack-cloud/hetzner-images/debian-12:latest`](https://ghcr.io/mystack-cloud/hetzner-images/debian-12:latest) | amd64,arm64 |
-| [`ghcr.io/mystack-cloud/hetzner-images/debian-13:latest`](https://ghcr.io/mystack-cloud/hetzner-images/debian-13:latest) | amd64,arm64 |
-| [`ghcr.io/mystack-cloud/hetzner-images/opensuse-15:latest`](https://ghcr.io/mystack-cloud/hetzner-images/opensuse-15:latest) | amd64 |
-| [`ghcr.io/mystack-cloud/hetzner-images/opensuse-16:latest`](https://ghcr.io/mystack-cloud/hetzner-images/opensuse-16:latest) | amd64 |
-| [`ghcr.io/mystack-cloud/hetzner-images/rocky-10:latest`](https://ghcr.io/mystack-cloud/hetzner-images/rocky-10:latest) | amd64 |
-| [`ghcr.io/mystack-cloud/hetzner-images/rocky-8:latest`](https://ghcr.io/mystack-cloud/hetzner-images/rocky-8:latest) | amd64 |
-| [`ghcr.io/mystack-cloud/hetzner-images/rocky-9:latest`](https://ghcr.io/mystack-cloud/hetzner-images/rocky-9:latest) | amd64 |
-| [`ghcr.io/mystack-cloud/hetzner-images/ubuntu-2204:latest`](https://ghcr.io/mystack-cloud/hetzner-images/ubuntu-2204:latest) | amd64,arm64 |
-| [`ghcr.io/mystack-cloud/hetzner-images/ubuntu-2404:latest`](https://ghcr.io/mystack-cloud/hetzner-images/ubuntu-2404:latest) | amd64,arm64 |
-
-### Copy pull reference
-
-```
-ghcr.io/mystack-cloud/hetzner-images/alma-10:latest
-```
-
-```
-ghcr.io/mystack-cloud/hetzner-images/alma-8:latest
-```
-
-```
-ghcr.io/mystack-cloud/hetzner-images/alma-9:latest
-```
-
-```
-ghcr.io/mystack-cloud/hetzner-images/centos-10:latest
-```
-
-```
-ghcr.io/mystack-cloud/hetzner-images/centos-9:latest
-```
-
-```
-ghcr.io/mystack-cloud/hetzner-images/debian-11:latest
-```
-
-```
-ghcr.io/mystack-cloud/hetzner-images/debian-12:latest
-```
-
-```
-ghcr.io/mystack-cloud/hetzner-images/debian-13:latest
-```
-
-```
-ghcr.io/mystack-cloud/hetzner-images/opensuse-15:latest
-```
-
-```
-ghcr.io/mystack-cloud/hetzner-images/opensuse-16:latest
-```
-
-```
-ghcr.io/mystack-cloud/hetzner-images/rocky-10:latest
-```
-
-```
-ghcr.io/mystack-cloud/hetzner-images/rocky-8:latest
-```
-
-```
-ghcr.io/mystack-cloud/hetzner-images/rocky-9:latest
-```
-
-```
-ghcr.io/mystack-cloud/hetzner-images/ubuntu-2204:latest
-```
-
-```
-ghcr.io/mystack-cloud/hetzner-images/ubuntu-2404:latest
-```
-
+| [alma-10](https://ghcr.io/mystack-cloud/hetzner-images/alma-10:latest) | amd64 |
+| [alma-8](https://ghcr.io/mystack-cloud/hetzner-images/alma-8:latest) | amd64 |
+| [alma-9](https://ghcr.io/mystack-cloud/hetzner-images/alma-9:latest) | amd64 |
+| [centos-10](https://ghcr.io/mystack-cloud/hetzner-images/centos-10:latest) | amd64 |
+| [centos-9](https://ghcr.io/mystack-cloud/hetzner-images/centos-9:latest) | amd64 |
+| [debian-11](https://ghcr.io/mystack-cloud/hetzner-images/debian-11:latest) | amd64, arm64 |
+| [debian-12](https://ghcr.io/mystack-cloud/hetzner-images/debian-12:latest) | amd64, arm64 |
+| [debian-13](https://ghcr.io/mystack-cloud/hetzner-images/debian-13:latest) | amd64, arm64 |
+| [opensuse-15](https://ghcr.io/mystack-cloud/hetzner-images/opensuse-15:latest) | amd64 |
+| [opensuse-16](https://ghcr.io/mystack-cloud/hetzner-images/opensuse-16:latest) | amd64 |
+| [rocky-10](https://ghcr.io/mystack-cloud/hetzner-images/rocky-10:latest) | amd64 |
+| [rocky-8](https://ghcr.io/mystack-cloud/hetzner-images/rocky-8:latest) | amd64 |
+| [rocky-9](https://ghcr.io/mystack-cloud/hetzner-images/rocky-9:latest) | amd64 |
+| [ubuntu-2204](https://ghcr.io/mystack-cloud/hetzner-images/ubuntu-2204:latest) | amd64, arm64 |
+| [ubuntu-2404](https://ghcr.io/mystack-cloud/hetzner-images/ubuntu-2404:latest) | amd64, arm64 |
 <!-- /REGISTRY_IMAGES -->
 
 To add or change images or architectures, edit `config/images.yaml` (and the fallback list in `scripts/download.sh` if not using yq).

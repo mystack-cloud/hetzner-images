@@ -44,19 +44,8 @@ jobs:
           echo "|-------|---------------|" >> table.md
           for image in $(yq -r '.images | keys | .[]' config/images.yaml | sort); do
             arches=$(yq -r ".images.${image} | keys | .[]" config/images.yaml | sort | paste -sd ', ' -)
-            ref="${REGISTRY}/${REPO}/${image}:latest"
-            url="https://${ref}"
-            echo "| [\`${ref}\`](${url}) | ${arches} |" >> table.md
-          done
-          echo "" >> table.md
-          echo "### Copy pull reference" >> table.md
-          echo "" >> table.md
-          for image in $(yq -r '.images | keys | .[]' config/images.yaml | sort); do
-            ref="${REGISTRY}/${REPO}/${image}:latest"
-            echo "\`\`\`" >> table.md
-            echo "$ref" >> table.md
-            echo "\`\`\`" >> table.md
-            echo "" >> table.md
+            url="https://${REGISTRY}/${REPO}/${image}:latest"
+            echo "| [${image}](${url}) | ${arches} |" >> table.md
           done
 
       - name: Update README
