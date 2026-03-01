@@ -181,3 +181,10 @@ jobs:
             git commit -m "chore: update vulnerability badges"
             git push
           fi
+
+  update-readme:
+    name: Update README
+    needs: badges
+    uses: ./.github/workflows/update-readme.yml
+    with:
+      registry: ghcr.io

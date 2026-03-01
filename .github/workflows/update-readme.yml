@@ -41,8 +41,8 @@ jobs:
           REPO: ${{ github.repository }}
           SECURITY_URL: "https://github.com/${{ github.repository }}/security/code-scanning?query=is%3Aopen+branch%3Amain+severity%3Acritical"
         run: |
-          echo "| Image | Architectures | Critical |" > table.md
-          echo "|-------|---------------|----------|" >> table.md
+          echo "| Image | Architectures | Vulnerabilities |" > table.md
+          echo "|-------|---------------|-----------------|" >> table.md
           for image in $(yq -r '.images | keys | .[]' config/images.yaml | sort); do
             arches=$(yq -r ".images.${image} | keys | .[]" config/images.yaml | sort | paste -sd ', ' -)
             url="https://${REGISTRY}/${REPO}/${image}:latest"
