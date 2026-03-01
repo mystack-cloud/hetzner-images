@@ -39,6 +39,7 @@ jobs:
         env:
           REGISTRY: ${{ inputs.registry }}
           REPO: ${{ github.repository }}
+          SECURITY_URL: "https://github.com/${{ github.repository }}/security/code-scanning?query=is%3Aopen+branch%3Amain+severity%3Acritical"
         run: |
           echo "| Image | Architectures | Critical |" > table.md
           echo "|-------|---------------|----------|" >> table.md
@@ -46,8 +47,9 @@ jobs:
             arches=$(yq -r ".images.${image} | keys | .[]" config/images.yaml | sort | paste -sd ', ' -)
             url="https://${REGISTRY}/${REPO}/${image}:latest"
             raw_url="https://raw.githubusercontent.com/${REPO}/main/badges/${image}.json"
-            badge_url="https://img.shields.io/endpoint?url=$(python3 -c "import urllib.parse; print(urllib.parse.quote('''$raw_url'''))")"
-            echo "| [${image}](${url}) | ${arches} | ![](${badge_url}) |" >> table.md
+            encoded=$(echo -n "$raw_url" | python3 -c 'import sys, urllib.parse; print(urllib.parse.quote(sys.stdin.read()))')
+            badge_url="https://img.shields.io/endpoint?url=${encoded}"
+            echo "| [${image}](${url}) | ${arches} | [![](${badge_url})](${SECURITY_URL}) |" >> table.md
           done
 
       - name: Update README

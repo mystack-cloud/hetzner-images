@@ -148,10 +148,11 @@ jobs:
         with:
           pattern: critical-*
           path: counts
+        continue-on-error: true
 
       - name: Generate badge JSON files
         run: |
-          mkdir -p badges
+          mkdir -p badges counts
           for image in $(yq -r '.images | keys | .[]' config/images.yaml | sort); do
             count_file="counts/critical-${image}/critical-count.txt"
             if [ -f "$count_file" ]; then
