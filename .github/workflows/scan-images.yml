@@ -104,6 +104,12 @@ jobs:
             echo "No findings." >> "$GITHUB_STEP_SUMMARY"
           fi
 
+      - name: Extract critical count
+        if: always()
+        run: |
+          critical=$(grep -oP 'CRITICAL:\s*\K\d+' trivy-report.txt 2>/dev/null | head -1)
+          echo "${critical:-0}" > critical-count.txt
+
       - name: Upload Trivy report as artifact
         if: always()
         uses: actions/upload-artifact@v4
@@ -111,3 +117,66 @@ jobs:
           name: trivy-${{ matrix.image }}
           path: trivy-report.txt
           retention-days: 30
+
+      - name: Upload critical count
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: critical-${{ matrix.image }}
+          path: critical-count.txt
+          retention-days: 7
+
+  badges:
+    name: Update vulnerability badges
+    needs: [prepare, scan]
+    if: always() && needs.prepare.outputs.matrix != ''
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: refs/heads/main
+
+      - name: Install yq
+        run: |
+          sudo wget -qO /usr/local/bin/yq "https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64"
+          sudo chmod +x /usr/local/bin/yq
+
+      - name: Download critical counts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: critical-*
+          path: counts
+
+      - name: Generate badge JSON files
+        run: |
+          mkdir -p badges
+          for image in $(yq -r '.images | keys | .[]' config/images.yaml | sort); do
+            count_file="counts/critical-${image}/critical-count.txt"
+            if [ -f "$count_file" ]; then
+              count=$(cat "$count_file")
+            else
+              count="?"
+            fi
+            if [ "$count" = "0" ]; then
+              color="green"
+            elif [ "$count" = "?" ]; then
+              color="lightgrey"
+            else
+              color="red"
+            fi
+            printf '%s\n' "{\"schemaVersion\":1,\"label\":\"critical\",\"message\":\"${count}\",\"color\":\"${color}\"}" > "badges/${image}.json"
+          done
+
+      - name: Commit and push badges
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add badges/
+          if git diff --staged --quiet; then
+            echo "No badge changes"
+          else
+            git commit -m "chore: update vulnerability badges"
+            git push
+          fi
