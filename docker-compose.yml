@@ -1,4 +1,4 @@
-x-build-common: &build-common
+x-download-common: &download-common
   build: .
   volumes:
     - .:/workspace
@@ -8,12 +8,8 @@ x-build-common: &build-common
 
 services:
   download:
-    <<: *build-common
+    <<: *download-common
     environment:
       - HETZNER_MIRROR_USER=${HETZNER_MIRROR_USER}
       - HETZNER_MIRROR_PASS=${HETZNER_MIRROR_PASS}
     entrypoint: ["bash", "scripts/download.sh"]
-
-  build:
-    <<: *build-common
-    entrypoint: ["bash", "scripts/build.sh"]

@@ -1,5 +1,5 @@
 # Tool image for downloading Hetzner bootimages and importing into Docker.
-# Used by docker-compose services: download, build.
+# Used by docker-compose service: download.
 FROM docker:24-cli
 RUN apk add --no-cache curl bash
 # Install yq for parsing config/images.yaml (mikefarah/yq)
