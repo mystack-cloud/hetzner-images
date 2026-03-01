@@ -115,7 +115,7 @@ jobs:
           REPO: ${{ github.repository }}
         run: |
           for image in $(yq -r '.images | keys | .[]' config/images.yaml); do
-            arches=$(yq -r --arg image "$image" '.images[$image] | keys | .[]' config/images.yaml)
+            arches=$(image="$image" yq -r '.images[env(image)] | keys | .[]' config/images.yaml)
             refs=""
             for arch in $arches; do
               refs="${refs} ${REGISTRY}/${REPO}/${image}:${arch}"
