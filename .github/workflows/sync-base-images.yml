@@ -38,8 +38,9 @@ jobs:
             exit 1
           fi
           echo "Matrix JSON length: ${#json} chars (output written to GITHUB_OUTPUT)"
-          # Single-line matrix required: GITHUB_OUTPUT is newline-delimited and fromJson() needs valid JSON
-          printf 'matrix=%s\n' "${json//%/%25}" >> "$GITHUB_OUTPUT"
+          # strategy.matrix must be an object; use include: [...] for explicit list of jobs
+          matrix_json="{\"include\":${json}}"
+          printf 'matrix=%s\n' "${matrix_json//%/%25}" >> "$GITHUB_OUTPUT"
           images=$(yq -r '.images | keys | .[]' config/images.yaml | sort -u)
           echo "names<<NAMES_EOF" >> "$GITHUB_OUTPUT"
           echo "$images" >> "$GITHUB_OUTPUT"
