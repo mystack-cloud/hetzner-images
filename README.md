@@ -1,6 +1,6 @@
 # Hetzner Images
 
-[![Sync base images](https://github.com/mystack-cloud/hetzner-images/actions/workflows/sync-base-images.yml/badge.svg)](https://github.com/mystack-cloud/hetzner-images/actions/workflows/sync-base-images.yml)
+[![Sync base images](https://github.com/mystack-cloud/hetzner-images/actions/workflows/sync-base-images.yml/badge.svg)](https://github.com/mystack-cloud/hetzner-images/actions/workflows/sync-base-images.yml) [![Scan images](https://github.com/mystack-cloud/hetzner-images/actions/workflows/scan-images.yml/badge.svg)](https://github.com/mystack-cloud/hetzner-images/actions/workflows/scan-images.yml)
 
 **Container registry of standard Hetzner bootimages** — downloaded from the [Hetzner bootimages mirror](https://download.hetzner.com/bootimages/) and published to GitHub Container Registry (GHCR) as multi-arch images. No custom build step: this repository only syncs official Hetzner base tarballs into a container registry.
 
@@ -95,12 +95,18 @@ docker compose run --rm download debian-13 amd64
 
 This produces `metal-base:debian-13-amd64` and caches the tarball in `dist/`.
 
+## Security scanning
+
+A weekly workflow (**Scan images**) runs [Trivy](https://github.com/aquasecurity/trivy) against each image in the registry and uploads results as SARIF. Findings appear under **Security → Code scanning** (and in the [Actions](https://github.com/mystack-cloud/hetzner-images/actions) run). Schedule: Sundays 04:00 UTC; can also be triggered manually.
+
 ## Project structure
 
 ```
 .
 ├── .github/workflows/
-│   └── sync-base-images.yml   # Bootimages → GHCR (monthly + manual)
+│   ├── scan-images.yml        # Trivy vulnerability scan (weekly + manual)
+│   ├── sync-base-images.yml   # Bootimages → GHCR (monthly + manual)
+│   └── update-readme.yml      # Update README table (standalone or after sync)
 ├── config/
 │   └── images.yaml            # Image/arch → Hetzner bootimage filename
 ├── Dockerfile                 # Tool image for download service (curl, Docker CLI, yq)

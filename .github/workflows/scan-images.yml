@@ -1,0 +1,69 @@
+# Weekly security scan of GHCR images with Trivy. Findings appear in Security → Code scanning.
+# See: https://docs.github.com/en/code-security/code-scanning
+name: Scan images
+
+on:
+  schedule:
+    - cron: "0 4 * * 0"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write
+
+env:
+  REGISTRY: ghcr.io
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.outputs.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install yq
+        run: |
+          sudo wget -qO /usr/local/bin/yq "https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64"
+          sudo chmod +x /usr/local/bin/yq
+      - name: Image list
+        id: outputs
+        run: |
+          json="[$(yq -r '.images | keys | .[]' config/images.yaml | sort | sed 's/.*/{"image":"&"}/' | paste -sd ',')]"
+          matrix="{\"include\":$json}"
+          printf 'matrix=%s\n' "${matrix//%/%25}" >> "$GITHUB_OUTPUT"
+
+  scan:
+    name: Scan ${{ matrix.image }}
+    needs: prepare
+    if: needs.prepare.outputs.matrix != ''
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.prepare.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@0.33.1
+        with:
+          image-ref: ${{ env.REGISTRY }}/${{ github.repository }}/${{ matrix.image }}:latest
+          format: sarif
+          output: trivy-results.sarif
+          severity: CRITICAL,HIGH,MEDIUM
+        env:
+          TRIVY_USERNAME: ${{ github.actor }}
+          TRIVY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload Trivy scan results to GitHub Security
+        uses: github/codeql-action/upload-sarif@v4
+        if: always()
+        with:
+          sarif_file: trivy-results.sarif
+          category: ${{ matrix.image }}
