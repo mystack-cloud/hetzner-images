@@ -11,23 +11,23 @@ You can use them as base images in Docker builds. Use [container-registry.sh](ht
 The following images are synced to **ghcr.io/\<owner\>/\<repo\>/\<image\>:latest** (and per-arch tags). The table is updated by the sync workflow.
 
 <!-- REGISTRY_IMAGES -->
-| Image | Architectures |
-|-------|---------------|
-| [alma-10](https://ghcr.io/mystack-cloud/hetzner-images/alma-10:latest) | amd64 |
-| [alma-8](https://ghcr.io/mystack-cloud/hetzner-images/alma-8:latest) | amd64 |
-| [alma-9](https://ghcr.io/mystack-cloud/hetzner-images/alma-9:latest) | amd64 |
-| [centos-10](https://ghcr.io/mystack-cloud/hetzner-images/centos-10:latest) | amd64 |
-| [centos-9](https://ghcr.io/mystack-cloud/hetzner-images/centos-9:latest) | amd64 |
-| [debian-11](https://ghcr.io/mystack-cloud/hetzner-images/debian-11:latest) | amd64, arm64 |
-| [debian-12](https://ghcr.io/mystack-cloud/hetzner-images/debian-12:latest) | amd64, arm64 |
-| [debian-13](https://ghcr.io/mystack-cloud/hetzner-images/debian-13:latest) | amd64, arm64 |
-| [opensuse-15](https://ghcr.io/mystack-cloud/hetzner-images/opensuse-15:latest) | amd64 |
-| [opensuse-16](https://ghcr.io/mystack-cloud/hetzner-images/opensuse-16:latest) | amd64 |
-| [rocky-10](https://ghcr.io/mystack-cloud/hetzner-images/rocky-10:latest) | amd64 |
-| [rocky-8](https://ghcr.io/mystack-cloud/hetzner-images/rocky-8:latest) | amd64 |
-| [rocky-9](https://ghcr.io/mystack-cloud/hetzner-images/rocky-9:latest) | amd64 |
-| [ubuntu-2204](https://ghcr.io/mystack-cloud/hetzner-images/ubuntu-2204:latest) | amd64, arm64 |
-| [ubuntu-2404](https://ghcr.io/mystack-cloud/hetzner-images/ubuntu-2404:latest) | amd64, arm64 |
+| Image | Architectures | Critical |
+|-------|---------------|----------|
+| [alma-10](https://ghcr.io/mystack-cloud/hetzner-images/alma-10:latest) | amd64 | ![](https://img.shields.io/endpoint?url=https%3A//raw.githubusercontent.com/mystack-cloud/hetzner-images/main/badges/alma-10.json) |
+| [alma-8](https://ghcr.io/mystack-cloud/hetzner-images/alma-8:latest) | amd64 | ![](https://img.shields.io/endpoint?url=https%3A//raw.githubusercontent.com/mystack-cloud/hetzner-images/main/badges/alma-8.json) |
+| [alma-9](https://ghcr.io/mystack-cloud/hetzner-images/alma-9:latest) | amd64 | ![](https://img.shields.io/endpoint?url=https%3A//raw.githubusercontent.com/mystack-cloud/hetzner-images/main/badges/alma-9.json) |
+| [centos-10](https://ghcr.io/mystack-cloud/hetzner-images/centos-10:latest) | amd64 | ![](https://img.shields.io/endpoint?url=https%3A//raw.githubusercontent.com/mystack-cloud/hetzner-images/main/badges/centos-10.json) |
+| [centos-9](https://ghcr.io/mystack-cloud/hetzner-images/centos-9:latest) | amd64 | ![](https://img.shields.io/endpoint?url=https%3A//raw.githubusercontent.com/mystack-cloud/hetzner-images/main/badges/centos-9.json) |
+| [debian-11](https://ghcr.io/mystack-cloud/hetzner-images/debian-11:latest) | amd64,arm64 | ![](https://img.shields.io/endpoint?url=https%3A//raw.githubusercontent.com/mystack-cloud/hetzner-images/main/badges/debian-11.json) |
+| [debian-12](https://ghcr.io/mystack-cloud/hetzner-images/debian-12:latest) | amd64,arm64 | ![](https://img.shields.io/endpoint?url=https%3A//raw.githubusercontent.com/mystack-cloud/hetzner-images/main/badges/debian-12.json) |
+| [debian-13](https://ghcr.io/mystack-cloud/hetzner-images/debian-13:latest) | amd64,arm64 | ![](https://img.shields.io/endpoint?url=https%3A//raw.githubusercontent.com/mystack-cloud/hetzner-images/main/badges/debian-13.json) |
+| [opensuse-15](https://ghcr.io/mystack-cloud/hetzner-images/opensuse-15:latest) | amd64 | ![](https://img.shields.io/endpoint?url=https%3A//raw.githubusercontent.com/mystack-cloud/hetzner-images/main/badges/opensuse-15.json) |
+| [opensuse-16](https://ghcr.io/mystack-cloud/hetzner-images/opensuse-16:latest) | amd64 | ![](https://img.shields.io/endpoint?url=https%3A//raw.githubusercontent.com/mystack-cloud/hetzner-images/main/badges/opensuse-16.json) |
+| [rocky-10](https://ghcr.io/mystack-cloud/hetzner-images/rocky-10:latest) | amd64 | ![](https://img.shields.io/endpoint?url=https%3A//raw.githubusercontent.com/mystack-cloud/hetzner-images/main/badges/rocky-10.json) |
+| [rocky-8](https://ghcr.io/mystack-cloud/hetzner-images/rocky-8:latest) | amd64 | ![](https://img.shields.io/endpoint?url=https%3A//raw.githubusercontent.com/mystack-cloud/hetzner-images/main/badges/rocky-8.json) |
+| [rocky-9](https://ghcr.io/mystack-cloud/hetzner-images/rocky-9:latest) | amd64 | ![](https://img.shields.io/endpoint?url=https%3A//raw.githubusercontent.com/mystack-cloud/hetzner-images/main/badges/rocky-9.json) |
+| [ubuntu-2204](https://ghcr.io/mystack-cloud/hetzner-images/ubuntu-2204:latest) | amd64,arm64 | ![](https://img.shields.io/endpoint?url=https%3A//raw.githubusercontent.com/mystack-cloud/hetzner-images/main/badges/ubuntu-2204.json) |
+| [ubuntu-2404](https://ghcr.io/mystack-cloud/hetzner-images/ubuntu-2404:latest) | amd64,arm64 | ![](https://img.shields.io/endpoint?url=https%3A//raw.githubusercontent.com/mystack-cloud/hetzner-images/main/badges/ubuntu-2404.json) |
 <!-- /REGISTRY_IMAGES -->
 
 To add or change images or architectures, edit `config/images.yaml` (and the fallback list in `scripts/download.sh` if not using yq).
