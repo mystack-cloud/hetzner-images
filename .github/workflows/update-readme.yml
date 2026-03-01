@@ -1,0 +1,81 @@
+# Update README with image list from config/images.yaml.
+# Run standalone: Actions → Update README → Run workflow.
+# Also used by the sync workflow after manifest.
+name: Update README
+
+on:
+  workflow_dispatch:
+    inputs:
+      registry:
+        description: 'Container registry (e.g. ghcr.io)'
+        required: false
+        default: 'ghcr.io'
+        type: string
+  workflow_call:
+    inputs:
+      registry:
+        description: 'Container registry (e.g. ghcr.io)'
+        required: false
+        default: 'ghcr.io'
+        type: string
+
+jobs:
+  update-readme:
+    name: Update README with image list
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install yq
+        run: |
+          sudo wget -qO /usr/local/bin/yq "https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64"
+          sudo chmod +x /usr/local/bin/yq
+
+      - name: Generate images table
+        id: table
+        env:
+          REGISTRY: ${{ inputs.registry }}
+          REPO: ${{ github.repository }}
+        run: |
+          echo "| Image | Architectures |" > table.md
+          echo "|-------|---------------|" >> table.md
+          for image in $(yq -r '.images | keys | .[]' config/images.yaml | sort); do
+            arches=$(yq -r ".images.${image} | keys | .[]" config/images.yaml | sort | paste -sd ', ' -)
+            ref="${REGISTRY}/${REPO}/${image}:latest"
+            url="https://${ref}"
+            echo "| [\`${ref}\`](${url}) | ${arches} |" >> table.md
+          done
+          echo "" >> table.md
+          echo "### Copy pull reference" >> table.md
+          echo "" >> table.md
+          for image in $(yq -r '.images | keys | .[]' config/images.yaml | sort); do
+            ref="${REGISTRY}/${REPO}/${image}:latest"
+            echo "\`\`\`" >> table.md
+            echo "$ref" >> table.md
+            echo "\`\`\`" >> table.md
+            echo "" >> table.md
+          done
+
+      - name: Update README
+        run: |
+          awk '
+            /<!-- REGISTRY_IMAGES -->/ { print; while ((getline line < "table.md") > 0) print line; close("table.md"); skip=1; next }
+            skip && /<!-- \/REGISTRY_IMAGES -->/ { print; skip=0; next }
+            skip { next }
+            { print }
+          ' README.md > README.new && mv README.new README.md
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add README.md
+          if git diff --staged --quiet; then
+            echo "No README changes"
+          else
+            git commit -m "chore: update README with images in registry"
+            git push
+          fi
