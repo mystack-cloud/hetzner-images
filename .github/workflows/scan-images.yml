@@ -53,6 +53,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run Trivy vulnerability scanner (table)
+        id: trivy-table
         uses: aquasecurity/trivy-action@0.33.1
         with:
           image-ref: ${{ env.REGISTRY }}/${{ github.repository }}/${{ matrix.image }}:latest
@@ -63,6 +64,13 @@ jobs:
         env:
           TRIVY_USERNAME: ${{ github.actor }}
           TRIVY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Ensure report file exists
+        if: always()
+        run: |
+          if [ ! -s trivy-report.txt ]; then
+            echo "No vulnerabilities found." > trivy-report.txt
+          fi
 
       - name: Run Trivy vulnerability scanner (SARIF)
         uses: aquasecurity/trivy-action@0.33.1
@@ -89,9 +97,10 @@ jobs:
         run: |
           echo "### Trivy scan: ${{ matrix.image }}" >> "$GITHUB_STEP_SUMMARY"
           echo "" >> "$GITHUB_STEP_SUMMARY"
-          if [ -s trivy-report.txt ]; then
+          REPORT="trivy-report.txt"
+          if [ -s "$REPORT" ]; then
             echo '```' >> "$GITHUB_STEP_SUMMARY"
-            cat trivy-report.txt >> "$GITHUB_STEP_SUMMARY"
+            cat "$REPORT" >> "$GITHUB_STEP_SUMMARY"
             echo '```' >> "$GITHUB_STEP_SUMMARY"
           else
             echo "No findings." >> "$GITHUB_STEP_SUMMARY"
