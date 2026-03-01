@@ -1,6 +1,7 @@
 ---
 # Download Hetzner bootimages, import as Docker images, push to GHCR (multi-arch).
 # Runs monthly and on workflow_dispatch (manual). Image set from config/images.yaml.
+# Test the prepare step locally: ./test/scripts/test-prepare.sh (requires yq; optional jq to validate JSON).
 name: Sync Hetzner Base Images
 
 on:
@@ -31,14 +32,14 @@ jobs:
             echo "ERROR: config/images.yaml not found" >&2
             exit 1
           fi
-          json=$(bash scripts/list.sh --json)
+          json=$(bash scripts/list.sh --json | tr -d '\n')
           if [ -z "$json" ] || [ "$json" = "[]" ]; then
             echo "ERROR: list.sh produced no image/arch pairs (check config/images.yaml)" >&2
             exit 1
           fi
           echo "Matrix JSON length: ${#json} chars (output written to GITHUB_OUTPUT)"
-          # Single-line matrix required for strategy.matrix fromJson(); % must be escaped for GITHUB_OUTPUT
-          printf '%s\n' "matrix=${json//%/%25}" >> "$GITHUB_OUTPUT"
+          # Single-line matrix required: GITHUB_OUTPUT is newline-delimited and fromJson() needs valid JSON
+          printf 'matrix=%s\n' "${json//%/%25}" >> "$GITHUB_OUTPUT"
           images=$(yq -r '.images | keys | .[]' config/images.yaml | sort -u)
           echo "names<<NAMES_EOF" >> "$GITHUB_OUTPUT"
           echo "$images" >> "$GITHUB_OUTPUT"
