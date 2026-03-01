@@ -11,7 +11,21 @@ The following images are synced to **ghcr.io/\<owner\>/\<repo\>/\<image\>:latest
 <!-- REGISTRY_IMAGES -->
 | Image | Architectures |
 |-------|---------------|
-| debian-13 | amd64, arm64 |
+| `alma-10` | amd64 |
+| `alma-8` | amd64 |
+| `alma-9` | amd64 |
+| `centos-10` | amd64 |
+| `centos-9` | amd64 |
+| `debian-11` | amd64,arm64 |
+| `debian-12` | amd64,arm64 |
+| `debian-13` | amd64,arm64 |
+| `opensuse-15` | amd64 |
+| `opensuse-16` | amd64 |
+| `rocky-10` | amd64 |
+| `rocky-8` | amd64 |
+| `rocky-9` | amd64 |
+| `ubuntu-2204` | amd64,arm64 |
+| `ubuntu-2404` | amd64,arm64 |
 <!-- /REGISTRY_IMAGES -->
 
 To add or change images or architectures, edit `config/images.yaml` (and the fallback list in `scripts/download.sh` if not using yq).
