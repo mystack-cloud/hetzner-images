@@ -1,5 +1,7 @@
 # Hetzner Images
 
+[![Sync base images](https://github.com/mystack-cloud/hetzner-images/actions/workflows/sync-base-images.yml/badge.svg)](https://github.com/mystack-cloud/hetzner-images/actions/workflows/sync-base-images.yml)
+
 **Container registry of standard Hetzner bootimages** — downloaded from the [Hetzner bootimages mirror](https://download.hetzner.com/bootimages/) and published to GitHub Container Registry (GHCR) as multi-arch images. No custom build step: this repository only syncs official Hetzner base tarballs into a container registry.
 
 You can use them as base images in Docker builds. Use [container-registry.sh](https://github.com/mystack-cloud/container-registry.sh) to download any Docker image (including custom images you built from these bases) from a registry to a Hetzner root server in rescue mode, in a format the [Hetzner installimage](https://github.com/hetzneronline/installimage) script understands.

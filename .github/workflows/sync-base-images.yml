@@ -128,4 +128,4 @@ jobs:
     needs: [prepare, manifest]
     uses: ./.github/workflows/update-readme.yml
     with:
-      registry: ${{ env.REGISTRY }}
+      registry: ghcr.io
