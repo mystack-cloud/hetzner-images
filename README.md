@@ -97,7 +97,7 @@ This produces `metal-base:debian-13-amd64` and caches the tarball in `dist/`.
 
 ## Security scanning
 
-A weekly workflow (**Scan images**) runs [Trivy](https://github.com/aquasecurity/trivy) against each image in the registry and uploads results as SARIF. Findings appear under **Security → Code scanning** (and in the [Actions](https://github.com/mystack-cloud/hetzner-images/actions) run). Schedule: Sundays 04:00 UTC; can also be triggered manually.
+A weekly workflow (**Scan images**) runs [Trivy](https://github.com/aquasecurity/trivy) against each image in the registry. Findings appear in **Security → Code scanning**, in each scan job’s **summary**, and as **artifacts** (per-image reports, 30-day retention). Schedule: Sundays 04:00 UTC; can also be triggered manually.
 
 ## Project structure
 
