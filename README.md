@@ -4,7 +4,7 @@
 
 **Container registry of standard Hetzner bootimages** — downloaded from the [Hetzner bootimages mirror](https://download.hetzner.com/bootimages/) and published to GitHub Container Registry (GHCR) as multi-arch images. No custom build step: this repository only syncs official Hetzner base tarballs into a container registry.
 
-You can use them as base images in Docker builds. Use [container-registry.sh](https://github.com/mystack-cloud/container-registry.sh) to download any Docker image (including custom images you built from these bases) from a registry to a Hetzner root server in rescue mode, in a format the [Hetzner installimage](https://github.com/hetzneronline/installimage) script understands.
+You can use them as base images in Docker builds. Use [hetzner-download-image.sh](https://github.com/mystack-cloud/hetzner-download-image.sh) to download any Docker image (including custom images you built from these bases) from a registry to a Hetzner root server in rescue mode, in a format the [Hetzner installimage](https://github.com/hetzneronline/installimage) script understands.
 
 ## Images in registry
 
@@ -42,12 +42,12 @@ docker pull ghcr.io/<owner>/<repo>/debian-13:latest
 
 **Without Docker (e.g. Hetzner root server in rescue mode):**
 
-Use [container-registry.sh](https://github.com/mystack-cloud/container-registry.sh) to pull images as Docker-format tarballs (no daemon required):
+Use [hetzner-download-image.sh](https://github.com/mystack-cloud/hetzner-download-image.sh) to download images as rootfs tarballs for installimage (no Docker daemon required):
 
 ```bash
-curl -fsSL https://get.container-registry.sh | sh -s
-container-registry.sh pull -u USER:TOKEN ghcr.io/<owner>/<repo>/debian-13:latest
-# Load into Docker if available: docker load -i <output>.tar.gz
+curl -sSL https://raw.githubusercontent.com/mystack-cloud/hetzner-download-image.sh/main/get.hetzner-download-image.sh | sh -s
+hetzner-download-image.sh -o debian-13.tar.gz /tmp/ ghcr.io/<owner>/<repo>/debian-13:latest
+# For private GHCR: hetzner-download-image.sh -u USER:TOKEN ghcr.io/<owner>/<repo>/debian-13:latest
 ```
 
 For private GHCR images, use a [Personal Access Token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token) with `read:packages` as the password.
