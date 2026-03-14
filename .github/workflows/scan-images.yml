@@ -185,6 +185,8 @@ jobs:
   update-readme:
     name: Update README
     needs: badges
+    permissions:
+      contents: write
     uses: ./.github/workflows/update-readme.yml
     with:
       registry: ghcr.io
