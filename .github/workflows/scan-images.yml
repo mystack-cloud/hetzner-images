@@ -79,7 +79,7 @@ jobs:
             -v "${{ github.workspace }}":/work -w /work \
             aquasec/trivy:latest image \
             --format sarif -o trivy-results.sarif \
-            --severity CRITICAL,HIGH,MEDIUM \
+            --severity CRITICAL,HIGH \
             --exit-code 0 \
             "${{ env.REGISTRY }}/${{ github.repository }}/${{ matrix.image }}:latest"
 

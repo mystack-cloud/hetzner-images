@@ -20,34 +20,8 @@ if command -v yq &>/dev/null && [ -f "$CONFIG_FILE" ]; then
     exit 1
   fi
 else
-  # Fallback: static mapping (must match config/images.yaml)
-  case "${IMAGE}-${ARCH}" in
-    ubuntu-2404-amd64)   BASE_FILE="Ubuntu-2404-noble-amd64-base.tar.gz" ;;
-    ubuntu-2404-arm64)   BASE_FILE="Ubuntu-2404-noble-arm64-base.tar.gz" ;;
-    ubuntu-2204-amd64)   BASE_FILE="Ubuntu-2204-jammy-amd64-base.tar.gz" ;;
-    ubuntu-2204-arm64)   BASE_FILE="Ubuntu-2204-jammy-arm64-base.tar.gz" ;;
-    debian-13-amd64)     BASE_FILE="Debian-1303-trixie-amd64-base.tar.gz" ;;
-    debian-13-arm64)     BASE_FILE="Debian-1303-trixie-arm64-base.tar.gz" ;;
-    debian-12-amd64)     BASE_FILE="Debian-1213-bookworm-amd64-base.tar.gz" ;;
-    debian-12-arm64)     BASE_FILE="Debian-1213-bookworm-arm64-base.tar.gz" ;;
-    debian-11-amd64)     BASE_FILE="Debian-1111-bullseye-amd64-base.tar.gz" ;;
-    debian-11-arm64)     BASE_FILE="Debian-1111-bullseye-arm64-base.tar.gz" ;;
-    centos-10-amd64)     BASE_FILE="CentOS-1000-stream-amd64-base.tar.gz" ;;
-    centos-9-amd64)      BASE_FILE="CentOS-90-stream-amd64-base.tar.gz" ;;
-    rocky-10-amd64)      BASE_FILE="Rocky-1001-amd64-base.tar.gz" ;;
-    rocky-9-amd64)       BASE_FILE="Rocky-97-amd64-base.tar.gz" ;;
-    rocky-8-amd64)       BASE_FILE="Rocky-810-amd64-base.tar.gz" ;;
-    alma-10-amd64)       BASE_FILE="Alma-1001-amd64-base.tar.gz" ;;
-    alma-9-amd64)        BASE_FILE="Alma-97-amd64-base.tar.gz" ;;
-    alma-8-amd64)        BASE_FILE="Alma-810-amd64-base.tar.gz" ;;
-    opensuse-16-amd64)   BASE_FILE="Opensuse-1600-amd64-base.tar.gz" ;;
-    opensuse-15-amd64)   BASE_FILE="Opensuse-1506-amd64-base.tar.gz" ;;
-    *)
-      echo "ERROR: Unknown image/arch: ${IMAGE}/${ARCH}"
-      echo "Available: list in config/images.yaml or use image keys (e.g. debian-13, ubuntu-2404) with arch amd64 or arm64"
-      exit 1
-      ;;
-  esac
+  echo "ERROR: yq and ${CONFIG_FILE} are required"
+  exit 1
 fi
 
 BASE_URL="${HETZNER_BASE}/${BASE_FILE}"
