@@ -179,6 +179,7 @@ jobs:
             echo "No badge changes"
           else
             git commit -m "chore: update vulnerability badges"
+            git pull --rebase
             git push
           fi
 
